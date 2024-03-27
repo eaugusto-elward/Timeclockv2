@@ -1,5 +1,6 @@
 ﻿@page "/"
 @implements IDisposable
+@using Radzen.Blazor
 
 <div class="clock-container">
     <div class="date-display">@currentDate</div>
@@ -12,12 +13,50 @@
     </div>
 </div>
 
+<div class="button-container">
+    <RadzenButton Text="Start" Disabled="@isStartDisabled" Click="@Start" Style="margin-right: 10px;"></RadzenButton>
+    <RadzenButton Text="Pause" Disabled="@isPauseDisabled" Click="@Pause" Style="margin-right: 10px;"></RadzenButton>
+    <RadzenButton Text="Stop" Disabled="@isStopDisabled" Click="@Stop"></RadzenButton>
+</div>
+<hr class="button-divider" />
+
+<RadzenTabs>
+    <Tabs>
+    <RadzenTabsItem Text="Timeclock">
+        @foreach (var time in startTimes)
+        {
+            <div>@time</div>
+        }
+    </RadzenTabsItem>
+    <RadzenTabsItem Text="Settings">
+        @foreach (var time in pauseTimes)
+        {
+            <div>@time</div>
+        }
+    </RadzenTabsItem>
+    <RadzenTabsItem Text="Account">
+        @foreach (var time in stopTimes)
+        {
+            <div>@time</div>
+        }
+    </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>
+
 @code {
     private System.Timers.Timer timer;
     private string hours = DateTime.Now.ToString("hh");
     private string minutes = DateTime.Now.ToString("mm");
     private string seconds = DateTime.Now.ToString("ss");
     private string currentDate = DateTime.Now.ToString("dddd, MMMM dd, yyyy");
+
+    private bool isStartDisabled = false;
+    private bool isPauseDisabled = true;
+    private bool isStopDisabled = true;
+
+    private List<string> startTimes = new List<string>();
+    private List<string> pauseTimes = new List<string>();
+    private List<string> stopTimes = new List<string>();
 
     protected override void OnInitialized()
     {
@@ -35,22 +74,31 @@
         InvokeAsync(StateHasChanged); // Request the UI to refresh
     }
 
+    private void Start()
+    {
+        isStartDisabled = true;
+        isPauseDisabled = false;
+        isStopDisabled = false;
+        startTimes.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    private void Pause()
+    {
+        
+        isStopDisabled = !isStopDisabled; // Toggle stop disabled state based on pause state
+        pauseTimes.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    private void Stop()
+    {
+        isStartDisabled = false;
+        isPauseDisabled = true;
+        isStopDisabled = true;
+        stopTimes.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+    }
+
     public void Dispose()
     {
         timer?.Dispose();
     }
 }
-<RadzenTabs>
-    <Tabs>
-        <RadzenTabsItem Text="Timeclock">
-            Timeclock
-        </RadzenTabsItem>
-        <RadzenTabsItem Text="Settings">
-            Settings
-        </RadzenTabsItem>
-        <RadzenTabsItem Text="Account">
-            Account
-        </RadzenTabsItem>
-    </Tabs>
-</RadzenTabs>
-

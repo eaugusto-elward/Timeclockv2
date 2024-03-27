@@ -151,3 +151,16 @@ main {
 footer {
     flex-shrink: 0;
 }
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.button-divider {
+    margin-top: 20px;
+    border: 0;
+    height: 2px;
+    background-image: linear-gradient(to right, #d96457, #ffe8e8, #d96457);
+}
