@@ -1,8 +1,56 @@
 ﻿@page "/"
+@implements IDisposable
 
-<h1>Hello, world!</h1>
+<div class="clock-container">
+    <div class="date-display">@currentDate</div>
+    <div class="clock">
+        <div class="time-segment h">@hours</div>
+        <div class="colon">:</div>
+        <div class="time-segment m">@minutes</div>
+        <div class="colon">:</div>
+        <div class="time-segment s">@seconds</div>
+    </div>
+</div>
 
-Welcome to your new app.
+@code {
+    private System.Timers.Timer timer;
+    private string hours = DateTime.Now.ToString("hh");
+    private string minutes = DateTime.Now.ToString("mm");
+    private string seconds = DateTime.Now.ToString("ss");
+    private string currentDate = DateTime.Now.ToString("dddd, MMMM dd, yyyy");
 
+    protected override void OnInitialized()
+    {
+        timer = new System.Timers.Timer(1000);
+        timer.Elapsed += TimerElapsed;
+        timer.Enabled = true;
+    }
 
-@* https://codepen.io/hynden/pen/MWJxpG *@
+    private void TimerElapsed(Object source, System.Timers.ElapsedEventArgs e)
+    {
+        hours = DateTime.Now.ToString("hh");
+        minutes = DateTime.Now.ToString("mm");
+        seconds = DateTime.Now.ToString("ss");
+        currentDate = DateTime.Now.ToString("dddd, MMMM dd, yyyy");
+        InvokeAsync(StateHasChanged); // Request the UI to refresh
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+}
+<RadzenTabs>
+    <Tabs>
+        <RadzenTabsItem Text="Timeclock">
+            Timeclock
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Settings">
+            Settings
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Account">
+            Account
+        </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>
+
